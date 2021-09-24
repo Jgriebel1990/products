@@ -16,9 +16,27 @@ mongoose
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/dog", (req, res) => {
-  res.send("woof");
+app.get("/products", async (req, res) => {
+  const products = await Product.find({});
+  res.render("products/index", { products });
+});
+
+app.get("/products/new", (req, res) => {
+  res.render("products/new");
+});
+
+app.post("/products", (req, res) => {
+  new Product(req.body);
+  res.send("making product");
+});
+
+app.get("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findById(id);
+  console.log(product);
+  res.render("products/show", { product });
 });
 
 app.listen(3000, () => {
